@@ -10,7 +10,9 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
+#ifdef __GLIBC__
 #include <execinfo.h>
+#endif
 #include <limits.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -1195,6 +1197,7 @@ void line_free(int argc, char **argv)
 /* Used for debugging. */
 void print_trace(void)
 {
+#ifdef __GLIBC__
 	void *bt[BACKTRACE_MAX];
 	char **bt_sym;
 	int num, i;
@@ -1205,6 +1208,7 @@ void print_trace(void)
 	for (i = 0; i < num; i++)
 		fprintf(stderr, "DEBUG:  %s\n", bt_sym[i]);
 	free(bt_sym);
+#endif
 }
 
 /* Return a textual representation of @config. */
