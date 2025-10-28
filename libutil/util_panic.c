@@ -9,12 +9,14 @@
  * it under the terms of the MIT license. See LICENSE for details.
  */
 
-#include <execinfo.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/resource.h>
 #include <sys/time.h>
+#ifdef __GLIBC__
+#include <execinfo.h>
+#endif
 
 #include "lib/util_base.h"
 #include "lib/util_panic.h"
@@ -26,6 +28,7 @@
  */
 static void print_backtrace(void)
 {
+#ifdef __GLIBC__
 	void *array[256];
 	size_t i, size;
 	char **strings;
@@ -41,6 +44,7 @@ static void print_backtrace(void)
 		fprintf(stderr, "  %s\n", strings[i]);
 
 	free(strings);
+#endif
 }
 
 /*
