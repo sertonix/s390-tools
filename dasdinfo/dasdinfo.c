@@ -388,7 +388,7 @@ dinfo_is_busiddir(const char *fpath, const struct stat *UNUSED(sb),
 
 	if (tflag != FTW_D || (strncmp((fpath + ftwbuf->base), searchbusid,
 				       strlen(searchbusid)) != 0))
-		return FTW_CONTINUE;
+		return 0;
 	/*
 	 * ensure that the found entry is a busid and not a
 	 * subchannel ID
@@ -403,12 +403,12 @@ dinfo_is_busiddir(const char *fpath, const struct stat *UNUSED(sb),
 	/* append '\0' because readlink returns non zero terminated string */
 	linkdir[i] = '\0';
 	if (strstr(linkdir, "dasd") == NULL)
-		return FTW_CONTINUE;
+		return 0;
 	free(busiddir);
 	busiddir = strdup(fpath);
 	if (busiddir == NULL)
 		return -1;
-	return FTW_STOP;
+	return 1;
 }
 
 static int
@@ -452,7 +452,7 @@ dinfo_get_blockdev_from_busid(char *busid, char **blkdev)
 
 	/* dinfo_is_devnode needs to know the busid */
 	searchbusid = busid;
-	if (nftw(sysfsdir, dinfo_is_busiddir, 200, flags) != FTW_STOP)
+	if (nftw(sysfsdir, dinfo_is_busiddir, 200, flags) != 1)
 		goto out;
 
 	/*
